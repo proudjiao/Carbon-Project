@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'react-modal';
 import { mediaQueries } from '../../shared/config';
+import config from '../../config';
 
 import axios from 'axios';
 
@@ -38,7 +39,7 @@ export default function Project(props) {
 
   const handleDeleteProject = (id) => {
     axios
-      .delete(`http://localhost:3000/api/projects/${id}`)
+      .delete(config.SERVER_URL + `/api/projects/${id}`)
       .then((res) => {
         alert(res.data);
         props.handleUpdateProject();

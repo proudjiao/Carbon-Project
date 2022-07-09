@@ -21,22 +21,23 @@ import Dashboard from "./components/Dashboard";
 import GrapesJsEditor from "./components/GraphJsEditor";
 import AdminPage from "./components/Admin";
 
+import config from "./config";
+
 import Create from "./components/Dashboard/Create";
 
 const App = () => {
   const [value, setValue] = React.useState(0);
   const [collapseNavbar, setcollapseNavbar] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  let tabs;
-  let isAdmin;
-
-  axios.get(`http://localhost:3000/api/admin/is_admin`).then((res) => {
-    console.log(res);
-    isAdmin = res.data.isAdmin;
+  axios.get(config.SERVER_URL + `/api/admin/is_admin`).then((res) => {
+    if (res.data.isAdmin) {
+      setIsAdmin(1);
+    }
     console.log("is admin: ", isAdmin);
   });
 

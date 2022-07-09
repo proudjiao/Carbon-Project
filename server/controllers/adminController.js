@@ -2,7 +2,9 @@
 const UserModel = require("../db/models/User");
 const ProjectModel = require("../db/models/Project");
 
-function isAuthenticated(req, res, next) {
+const { User } = require("../db");
+
+const isAuthenticated = async (req, res, next) => {
   // req.isAuthenticated() is a method passed from the passport
   // authentication that we can use to check whether
   // a user is authenticated.
@@ -20,7 +22,38 @@ function isAuthenticated(req, res, next) {
   }
 }
 
-function isAdmin(req, res, next) {
+const checkAdmin = async (req, res, next) => {
+  try {
+    const { user } = req;
+    const isAdmin = user.admin || user.superAdmin;
+
+    res.status(200).json({ isAdmin });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+}
+
+const getAllUsers = async (req, res, next) => {
+  try {
+    const { user } = req;
+    const isSuperAdmin = user.superAdmin;
+    let allUsers;
+
+    if (isSuperAdmin) {
+      allUsers = await User.find();
+    } else {
+      allUsers = await User.find({ admin: false, superAdmin: false });
+    }
+
+    res.status(200).json({
+      allUsers,
+    });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+}
+
+const isAdmin = async (req, res, next) => {
   try {
     if (req.user.admin || req.user.superAdmin) {
       next();
@@ -34,7 +67,7 @@ function isAdmin(req, res, next) {
   }
 }
 
-async function isSuperAdmin(req, res, next) {
+const isSuperAdmin = async (req, res, next) => {
   try {
     if (req.user.superAdmin) {
       next();
@@ -94,6 +127,8 @@ const approve = async (req, res, next) => {
 
 module.exports = {
   isAuthenticated,
+  checkAdmin,
+  getAllUsers,
   isAdmin,
   isSuperAdmin,
   promote,

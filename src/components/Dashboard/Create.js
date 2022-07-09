@@ -7,6 +7,7 @@ import axios from 'axios';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
+import config from '../../config';
 
 // Component declaration
 
@@ -18,7 +19,7 @@ const Create = (props) => {
   useEffect(() => {
     function getProject() {
       axios
-        .get('http://localhost:3000/api/projects/')
+        .get(config.SERVER_URL + '/api/projects/')
         .then((res) => setProjects(res.data))
         .catch((err) => console.log(err));
     }
@@ -65,7 +66,7 @@ const Create = (props) => {
           }}
           onSubmit={(values, { setSubmitting }) => {
             axios
-              .post('http://localhost:3000/api/projects/create', {
+              .post(config.SERVER_URL + '/api/projects/create', {
                 name: values.projectName,
               })
               .then((res) => {

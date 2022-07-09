@@ -6,6 +6,7 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import { checkPackageNameAvailable } from '../../services/api';
 import { mediaQueries } from '../../shared/config';
+import config from '../../config';
 
 import Project from './Project';
 
@@ -29,7 +30,7 @@ const Dash = (props) => {
   useEffect(() => {
     function getProject() {
       axios
-        .get('http://localhost:3000/api/projects/')
+        .get(config.SERVER_URL + '/api/projects/')
         .then((res) => setProjects(res.data))
         .catch((err) => console.log(err));
     }
@@ -78,7 +79,7 @@ const Dash = (props) => {
                     (isAvailable) => {
                       if (isAvailable) {
                         axios
-                          .post('http://localhost:3000/api/projects/create', {
+                          .post(config.SERVER_URL + '/api/projects/create', {
                             name: values.projectName,
                           })
                           .then((res) => {
@@ -147,7 +148,7 @@ const Dash = (props) => {
               }}
               onSubmit={(values, { setSubmitting }) => {
                 axios
-                  .post('http://localhost:3000/api/projects/create', {
+                  .post(config.SERVER_URL + '/api/projects/create', {
                     name: values.projectName,
                   })
                   .then((res) => {

@@ -4,7 +4,7 @@ const lookupByEmailURL = "https://slack.com/api/users.lookupByEmail";
 const IMOpenURL = "https://slack.com/api/im.open";
 const messageURL = "https://slack.com/api/chat.postMessage";
 
-function lookupByEmail(slug) {
+const lookupByEmail = async (slug) =>{
   if (!slug) {
     return;
   }
@@ -19,7 +19,7 @@ function lookupByEmail(slug) {
   })
 }
 
-function getDMID(userID) {
+const getDMID = async (userID) => {
   const endpoint = `${IMOpenURL}?token=${process.env.BOT_TOKEN}&user=${userID}`;
   return axios.get(endpoint).then(res => {
     if (res.data.ok) {
@@ -29,7 +29,7 @@ function getDMID(userID) {
   });
 }
 
-function sendMessageTo(ID, text) {
+const sendMessageTo = async (ID, text) => {
   const endpoint = encodeURI(`${messageURL}?token=${process.env.BOT_TOKEN}&channel=${ID}&text=${text}`);
   return axios.get(endpoint).then(res => {
     console.log(res.data);

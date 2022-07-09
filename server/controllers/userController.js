@@ -1,29 +1,27 @@
-const Router = require("express-promise-router");
 const { Project } = require("../../db");
 const { User } = require("../../db");
-
-const router = new Router();
-
-
 
 
 const handleError = (res) => {
   res.json({ "message": "bad" });
 }
 
-router.get('/:year-:month-:day', async (req, res) => {
+
+const getUserDate = async (req, res) => {
   let date;
+  const { year, month, day } = req.params;
   try {
-    date = new Date(`${req.params.year}-${req.params.month}-${req.params.day}`);
+    date = new Date(`${year}-${month}-${day}`);
   }
   catch (e) {
     handleError(res);
   }
   let notes = await DesignNote.find({ date: date });
   res.json(notes);
-});
+}
 
-router.post('/:year-:month-:day', async (req, res) => {
+
+const setUserDate = async (req, res) => {
   const { section, placement, slug, wordCount, art, status, comments } = req.body;
   const { year, month, day } = req.params;
 
@@ -43,9 +41,10 @@ router.post('/:year-:month-:day', async (req, res) => {
 
     res.json(note);
   })
-});
+}
 
-router.patch('/', async (req, res) => {
+
+const updateUser = async (req, res) => {
   const { id, placement, slug, section, wordCount, art, comments, status, date } = req.body;
   // TODO this is so bad
   const query = {};
@@ -58,9 +57,10 @@ router.patch('/', async (req, res) => {
 
   let entry = await DesignNote.findByIdAndUpdate(id, query);
   res.json(entry);
-});
+}
 
-router.delete('/:id', async (req, res) => {
+
+const removeUser = async (req, res) => {
   let { id } = req.params;
 
   let note = await DesignNote.findByIdAndRemove(id);
@@ -69,6 +69,13 @@ router.delete('/:id', async (req, res) => {
   } else {
     res.json([]);
   }
-});
+}
 
-module.exports = router
+
+module.exports = {
+  handleError,
+  getUserDate,
+  setUserDate,
+  updateUser,
+  removeUser,
+};

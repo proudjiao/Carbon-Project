@@ -2,17 +2,17 @@ import React from "react";
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
+import config from "../../config";
+
 const getUsers = () =>
-  axios.get(`http://localhost:3000/api/projects/users`).then((res) => res.data);
+  axios.get(config.SERVER_URL + `/api/admin/users`).then((res) => res.data);
 const promoteRequest = (UID) =>
   axios
-    .post(`http://localhost:3000/api/projects/promote`, UID)
+    .post(config.SERVER_URL + `/api/admin/promote`, UID)
     .then((res) => res.data);
 const demoteRequest = (UID) =>
-  axios.post(`http://localhost:3000/api/demote`, UID).then((res) => res.data);
+  axios.post(config.SERVER_URL + `/admin/api/demote`, UID).then((res) => res.data);
 
-const StingText = `🐝 Buzzzzz
-You’ve been stung to update something on Buzz! Take a look at https://buzz.dailybruin.com.`;
 
 class AdminPage extends React.PureComponent {
   constructor(props) {
@@ -22,8 +22,6 @@ class AdminPage extends React.PureComponent {
       loading: true,
     };
     this.transformData = this.transformData.bind(this);
-    this.tagline = this.tagline.bind(this);
-    this.sting = this.sting.bind(this);
     this.promote = this.promote.bind(this);
     this.demote = this.demote.bind(this);
   }
@@ -39,16 +37,9 @@ class AdminPage extends React.PureComponent {
     });
   }
 
-  tagline(someone) {
-    if (someone.twitter && someone.twitter != "") {
-      return `Email ${someone.lastName} at ${someone.slug}@dailybruin.com or tweet @${someone.twitter}.`;
-    }
-    return `Email ${someone.lastName} at ${someone.slug}@dailybruin.com.`;
-  }
 
   transformData(data) {
     return data.allUsers.map((x) => ({
-      email: x.email,
       userId: x._id,
     }));
   }
@@ -67,9 +58,6 @@ class AdminPage extends React.PureComponent {
     window.location.reload();
   }
 
-  sting(someone) {
-    stingMember(someone._id);
-  }
 
   render() {
     if (this.state.loading) {
