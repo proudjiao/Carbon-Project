@@ -35,6 +35,17 @@ const checkAdmin = async (req, res, next) => {
   }
 }
 
+const checkSuperAdmin = async (req, res) => {
+  try {
+    const { user } = req;
+    const isSuperAdmin = user.superAdmin;
+
+    res.status(200).json({ isSuperAdmin });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+}
+
 const getAllUsers = async (req, res, next) => {
   try {
     const { user } = req;
