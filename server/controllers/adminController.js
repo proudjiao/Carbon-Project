@@ -58,7 +58,7 @@ const getAllUsers = async (req, res, next) => {
 const getAllProjects = async (req, res, next) => {
   // Cedric: I implement this way but I have not tested them yet. You can eleaborate them and test them.
   try {
-    let allProjects = await ProjectModel.find();
+    let allProjects = await ProjectModel.find({ status: 'Ready to be viewed' });
 
     res.status(200).json({
       allProjects,
