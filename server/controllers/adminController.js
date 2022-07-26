@@ -22,7 +22,7 @@ const isAuthenticated = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error, message: "Failed to check authentication" });
   }
-}
+};
 
 const checkAdmin = async (req, res, next) => {
   try {
@@ -33,7 +33,7 @@ const checkAdmin = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error });
   }
-}
+};
 
 const checkSuperAdmin = async (req, res) => {
   try {
@@ -64,7 +64,7 @@ const getAllUsers = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error });
   }
-}
+};
 
 const getAllProjects = async (req, res, next) => {
   // Cedric: I implement this way but I have not tested them yet. You can eleaborate them and test them.
@@ -77,7 +77,7 @@ const getAllProjects = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error, message: "Failed to get all projects" });
   }
-}
+};
 
 const isAdmin = async (req, res, next) => {
   try {
@@ -91,7 +91,7 @@ const isAdmin = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error, message: "Failed to check if admin" });
   }
-}
+};
 
 const isSuperAdmin = async (req, res, next) => {
   try {
@@ -105,7 +105,7 @@ const isSuperAdmin = async (req, res, next) => {
   } catch (error) {
     res.status(500).json({ error, message: "Failed to check if super admin" });
   }
-}
+};
 
 const promote = async (req, res, next) => {
   try {
@@ -136,22 +136,6 @@ const demote = async (req, res, next) => {
   }
 };
 
-const approve = async (req, res, next) => {
-  try {
-    const { id } = req.body;
-
-    const project = await ProjectModel.findById(id); //built in mongoose function
-
-    project.isApproved = true;
-    project.status = "Approved";
-    await project.save();
-
-    res.status(200).json({ message: "Project has been approved" });
-  } catch (error) {
-    res.status(500).json({ error, message: "Fail to approve" });
-  }
-};
-
 const createSection = async (req, res) => {
   try {
     // re.user.admin will not work in Postman, try to figure it out
@@ -168,7 +152,9 @@ const createSection = async (req, res) => {
     const newSection = new Section({ sectionName });
     await newSection.save();
 
-    res.status(200).json({ message: "New section created", section: newSection });
+    res
+      .status(200)
+      .json({ message: "New section created", section: newSection });
   } catch (error) {
     res.status(500).json({ error, message: "Failed to create section" });
   }
@@ -217,11 +203,29 @@ const getAllSections = async (req, res) => {
   }
 };
 
+//Admin Powers: Approving, Denying, Changes Requested, and Draft
+
+const approve = async (req, res, next) => {
+  try {
+    const { id } = req.body;
+
+    const project = await ProjectModel.findById(id); //built in mongoose function
+
+    project.isApproved = true;
+    project.status = "Approved";
+    await project.save();
+
+    res.status(200).json({ message: "Project has been approved" });
+  } catch (error) {
+    res.status(500).json({ error, message: "Fail to approve" });
+  }
+};
+
 const deny = async (req, res, next) => {
   try {
     const { id } = req.body;
 
-    const project = await ProjectModel.findById(id); 
+    const project = await ProjectModel.findById(id);
 
     project.isApproved = false;
     project.status = "Denied";
@@ -230,6 +234,24 @@ const deny = async (req, res, next) => {
     res.status(200).json({ message: "Project has been denied" });
   } catch (error) {
     res.status(500).json({ error, message: "Fail to deny" });
+  }
+};
+
+const changesRequested = async (req, res, next) => {
+  try {
+    const { id } = req.body;
+
+    const project = await ProjectModel.findById(id);
+
+    project.isApproved = false;
+    project.status = "changesRequested";
+    await project.save();
+
+    res.status(200).json({
+      message: "There have been some changes requested for your project.",
+    });
+  } catch (error) {
+    res.status(500).json({ error, message: "Fail to send requests" });
   }
 };
 
@@ -245,11 +267,10 @@ const assignSection = async (req, res, next) => {
 
     await user.save();
     await section.save();
-
   } catch (error) {
-    res.status(500).json({error, message: "Fail to assign user to section"});
+    res.status(500).json({ error, message: "Fail to assign user to section" });
   }
-}
+};
 
 // to be tested and wait for implementation of section shcema
 const removeSection = async (req, res, next) => {
@@ -258,23 +279,19 @@ const removeSection = async (req, res, next) => {
     const user = await UserModel.findById(userId);
     const section = await SectionModel.findById(sectionId);
 
-    let updatedSections = user.sections.filter(
-      (currSectionId) => {
-        return String(currSectionId) !== sectionId;
-      }
-    );
+    let updatedSections = user.sections.filter((currSectionId) => {
+      return String(currSectionId) !== sectionId;
+    });
     user.sections = updatedSections;
 
     section.owner = null;
 
     await user.save();
     await section.save();
-
   } catch (error) {
-    res.status(500).json({error, message: "Fail to assign user to section"});
+    res.status(500).json({ error, message: "Fail to assign user to section" });
   }
-}
-
+};
 
 module.exports = {
   isAuthenticated,
@@ -293,4 +310,5 @@ module.exports = {
   getAllSections,
   assignSection,
   removeSection,
+  changesRequested,
 };
