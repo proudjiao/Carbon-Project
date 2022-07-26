@@ -279,6 +279,7 @@ const removeSection = async (req, res, next) => {
 module.exports = {
   isAuthenticated,
   checkAdmin,
+  checkSuperAdmin,
   getAllUsers,
   getAllProjects,
   isAdmin,
