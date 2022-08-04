@@ -109,6 +109,11 @@ export default function Project(props) {
             size="small"
             variant="outlined"
             onClick={() => history.push(`/edit/${data["_id"]}`)}
+            disabled={
+              data.status === "Approved" || data.status === "Denied"
+                ? true
+                : false
+            }
           >
             Edit
           </Button>
